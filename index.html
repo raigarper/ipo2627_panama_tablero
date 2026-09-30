@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablero de fichas</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <script type="module" src="js/app.js"></script>
+</head>
+
+<body>
+    <div class="pagina">
+        <header class="cabecera">
+            <h1 class="cabecera__titulo">Tablero de fichas</h1>
+        </header>
+
+        <main class="contenido">
+            <section class="controles" data-controles aria-labelledby="controles-titulo">
+                <h2 class="controles__titulo" id="controles-titulo">Controles</h2>
+
+                <div class="controles__grupo">
+                    <button class="controles__boton" type="button" data-accion="nueva-partida">
+                        Nueva partida
+                    </button>
+                </div>
+
+                <div class="controles__grupo">
+                    <label class="controles__etiqueta" for="campo-n">Tamaño del tablero (N)</label>
+                    <input
+                        class="controles__campo"
+                        type="number"
+                        id="campo-n"
+                        min="3"
+                        step="1"
+                        value="4"
+                        data-control="n"
+                    >
+                </div>
+
+                <div class="controles__grupo" role="group" aria-labelledby="etiqueta-tamano">
+                    <span class="controles__etiqueta" id="etiqueta-tamano">Tamaño de ficha</span>
+                    <div class="controles__opciones">
+                        <label class="controles__opcion">
+                            <input type="radio" name="tamano-ficha" value="pequena" data-control="tamano">
+                            Pequeña
+                        </label>
+                        <label class="controles__opcion">
+                            <input type="radio" name="tamano-ficha" value="mediana" data-control="tamano" checked>
+                            Mediana
+                        </label>
+                        <label class="controles__opcion">
+                            <input type="radio" name="tamano-ficha" value="grande" data-control="tamano">
+                            Grande
+                        </label>
+                    </div>
+                </div>
+
+                <div class="controles__grupo">
+                    <button class="controles__boton" type="button" data-accion="cambiar-aspecto">
+                        Cambiar aspecto de las fichas
+                    </button>
+                </div>
+
+                <div class="controles__grupo">
+                    <button class="controles__boton" type="button" data-accion="abrir-ayuda" aria-haspopup="dialog">
+                        ¿Cómo se juega?
+                    </button>
+                </div>
+            </section>
+
+            <section class="zona-juego" aria-labelledby="zona-juego-titulo">
+                <h2 class="zona-juego__titulo visualmente-oculto" id="zona-juego-titulo">Tablero de juego</h2>
+                <div
+                    class="tablero"
+                    data-tablero
+                    role="grid"
+                    aria-label="Tablero de juego"
+                ></div>
+                <p class="zona-juego__estado" data-estado aria-live="polite"></p>
+            </section>
+        </main>
+
+        <div
+            class="ayuda ayuda--oculta"
+            data-ayuda
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ayuda-titulo"
+        >
+            <div class="ayuda__contenido">
+                <button class="ayuda__cerrar" type="button" data-ayuda-cerrar aria-label="Cerrar ayuda">
+                    ×
+                </button>
+                <h2 class="ayuda__titulo" id="ayuda-titulo">Cómo se juega</h2>
+                <p class="ayuda__texto">
+                    El objetivo es conseguir que cada fila del tablero contenga fichas de un único tipo.
+                </p>
+                <ul class="ayuda__lista">
+                    <li>Arrastra una ficha y suéltala sobre otra celda para intercambiar su posición.</li>
+                    <li>
+                        Sin ratón: pulsa una celda para seleccionarla y pulsa otra celda para intercambiarlas.
+                        Usa Tab para moverte entre celdas y Enter o Espacio para seleccionar.
+                    </li>
+                    <li>
+                        Cambiar el tamaño N, el tamaño de las fichas o su aspecto comienza una partida nueva.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

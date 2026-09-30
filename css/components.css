@@ -1,0 +1,184 @@
+/* components.css — Bloques BEM con anidamiento nativo.
+   Los elementos (bloque__elemento) son descendientes en el DOM y se anidan como
+   selector plano. Los modificadores (bloque--modificador) van en el MISMO
+   elemento que el bloque y se anidan como compuesto explícito "&.modificador". */
+
+:focus-visible {
+    outline: 0.15rem solid var(--color-foco);
+    outline-offset: 0.15rem;
+}
+
+.cabecera__titulo {
+    font-size: var(--fuente-tamano-titulo);
+    font-weight: var(--peso-titulo);
+}
+
+.controles {
+    background-color: var(--color-superficie);
+    border: 0.0625rem solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: var(--espacio-m);
+
+    .controles__titulo {
+        font-size: var(--fuente-tamano-subtitulo);
+        font-weight: var(--peso-realce);
+    }
+
+    .controles__etiqueta {
+        font-weight: var(--peso-realce);
+        font-size: var(--fuente-tamano-etiqueta);
+        color: var(--color-texto-suave);
+    }
+
+    .controles__boton {
+        background-color: var(--color-acento);
+        color: var(--color-acento-texto);
+        padding: var(--espacio-xs) var(--espacio-m);
+        border-radius: var(--radio-borde);
+        font-weight: var(--peso-realce);
+
+        &:hover {
+            background-color: var(--color-acento-hover);
+        }
+    }
+
+    .controles__campo {
+        border: 0.0625rem solid var(--color-borde);
+        border-radius: var(--radio-borde);
+        padding: var(--espacio-xs);
+        background-color: var(--color-superficie);
+    }
+}
+
+.zona-juego {
+    .zona-juego__titulo {
+        font-size: var(--fuente-tamano-subtitulo);
+        font-weight: var(--peso-realce);
+    }
+
+    .zona-juego__estado {
+        font-weight: var(--peso-realce);
+        color: var(--color-exito);
+        min-height: 1.5em;
+    }
+}
+
+.tablero {
+    background-color: var(--color-fondo-tablero);
+    border: 0.0625rem solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: var(--espacio-s);
+
+    .tablero__celda {
+        border-radius: calc(var(--radio-borde) / 2);
+        transition: background-color 150ms ease;
+
+        &.tablero__celda--en-sobrevuelo {
+            background-color: var(--color-sobrevuelo);
+        }
+
+        &.tablero__celda--seleccionada {
+            outline: 0.2rem solid var(--color-foco);
+            outline-offset: -0.2rem;
+        }
+    }
+
+    &.tablero--pequena {
+        --escala-ficha: 0.5;
+    }
+
+    &.tablero--mediana {
+        --escala-ficha: 0.7;
+    }
+
+    &.tablero--grande {
+        --escala-ficha: 0.9;
+    }
+
+    &.tablero--resuelto {
+        outline: 0.25rem solid var(--color-exito);
+        outline-offset: 0.2rem;
+    }
+}
+
+.ficha {
+    width: calc(var(--escala-ficha) * 100%);
+    aspect-ratio: 1;
+    border-width: 0.1875rem;
+    border-style: solid;
+
+    &.ficha--tipo-1 {
+        background-color: var(--color-tipo-1);
+        border-color: var(--color-tipo-1-borde);
+        border-radius: 50%;
+    }
+
+    &.ficha--tipo-2 {
+        background-color: var(--color-tipo-2);
+        border-color: var(--color-tipo-2-borde);
+        border-radius: calc(var(--radio-borde) / 3);
+    }
+
+    &.ficha--tipo-3 {
+        background-color: var(--color-tipo-3);
+        border-color: var(--color-tipo-3-borde);
+        border-radius: 0;
+        clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+
+    &.ficha--en-arrastre {
+        opacity: 0.5;
+    }
+}
+
+/* Aspecto alterno: mismas 3 fichas (mismo color por tipo), formas distintas */
+.tablero--aspecto-alterno .ficha--tipo-1 {
+    border-radius: 0;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.tablero--aspecto-alterno .ficha--tipo-2 {
+    border-radius: 50% 50% 50% 0;
+}
+
+.tablero--aspecto-alterno .ficha--tipo-3 {
+    border-radius: 0;
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+
+.ayuda {
+    background-color: var(--color-superficie);
+    border: 0.0625rem solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    box-shadow: 0 0.5rem 1.5rem hsl(var(--tono) 30% 10% / 0.2);
+
+    &.ayuda--oculta {
+        display: none;
+    }
+
+    .ayuda__contenido {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacio-s);
+        padding: var(--espacio-m);
+    }
+
+    .ayuda__cerrar {
+        align-self: flex-end;
+        font-size: var(--fuente-tamano-subtitulo);
+        font-weight: var(--peso-realce);
+    }
+
+    .ayuda__titulo {
+        font-size: var(--fuente-tamano-subtitulo);
+        font-weight: var(--peso-realce);
+    }
+
+    .ayuda__lista {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacio-xs);
+        padding-inline-start: var(--espacio-m);
+        list-style: disc;
+    }
+}
