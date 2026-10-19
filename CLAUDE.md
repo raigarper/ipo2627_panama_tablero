@@ -318,5 +318,10 @@ que `estaResuelto` detecta bien la victoria. Es la forma más rápida de validar
 ## Alcance
 
 Es una práctica de asignatura evaluada por su interfaz y su arquitectura. **No añadas funcionalidad que no se
-haya pedido**: ni backend, ni persistencia de partidas, ni contador de puntuaciones, ni animaciones
-elaboradas, ni modo oscuro. Si detectas algo que mejoraría el resultado, propónlo antes de implementarlo.
+haya pedido**: ni backend, ni persistencia de partidas, ni modo oscuro. Si detectas algo que mejoraría el
+resultado, propónlo antes de implementarlo.
+
+**Excepción decidida con el usuario**: un contador de movimientos (y opcionalmente un cronómetro) **sí entran
+en el alcance**. No los pide el enunciado, pero tampoco los prohíbe, y encajan bien en la cabecera de la
+interfaz sin añadir persistencia ni backend — son estado efímero del modelo (se reinician con cada partida
+nueva), no una funcionalidad de puntuación persistente.

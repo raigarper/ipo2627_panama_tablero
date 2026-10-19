@@ -1,0 +1,10 @@
+/* style.css — punto de entrada único de estilos.
+   index.html enlaza solo esta hoja; aquí se importan las demás en el orden
+   de cascada fijo del proyecto: reset → variables → layout → components.
+   Cambiar este orden rompe la cascada (variables antes de usarlas, layout
+   antes de los componentes que lo afinan), así que no se reordena. */
+
+@import url("reset.css");
+@import url("variables.css");
+@import url("layout.css");
+@import url("components.css");

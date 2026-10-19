@@ -1,3 +1,8 @@
+<!-- index.html — único punto de entrada de la aplicación.
+     Un único <link> de estilos (css/style.css), que a su vez importa el
+     resto de hojas en su orden de cascada fijo: reset → variables → layout
+     → components. Un solo <script type="module">; el resto de módulos los
+     importa app.js. -->
 <!DOCTYPE html>
 <html lang="es">
 
@@ -5,110 +10,160 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tablero de fichas</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/style.css">
     <script type="module" src="js/app.js"></script>
 </head>
 
 <body>
     <div class="pagina">
-        <header class="cabecera">
-            <h1 class="cabecera__titulo">Tablero de fichas</h1>
-        </header>
+            <!-- Cabecera: título + marcadores (movimientos/tiempo) + acciones.
+                 Pintada por CabeceraView; los marcadores se actualizan desde
+                 AppController en cada "cambio" del modelo. -->
+            <header class="cabecera" data-cabecera>
+                <div class="cabecera__titulo-grupo">
+                    <p class="cabecera__eyebrow">Interacción Persona-Ordenador</p>
+                    <h1 class="cabecera__titulo">Tablero de fichas</h1>
+                </div>
 
-        <main class="contenido">
-            <section class="controles" data-controles aria-labelledby="controles-titulo">
-                <h2 class="controles__titulo" id="controles-titulo">Controles</h2>
+                <div class="cabecera__acciones">
+                    <span class="marcador" aria-label="Movimientos realizados">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                        </svg>
+                        <span data-marcador-movimientos>0</span>
+                    </span>
+                    <span class="marcador" aria-label="Tiempo transcurrido">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+                        <span data-marcador-tiempo>00:00</span>
+                    </span>
 
-                <div class="controles__grupo">
-                    <button class="controles__boton" type="button" data-accion="nueva-partida">
-                        Nueva partida
+                    <span class="cabecera__separador" aria-hidden="true"></span>
+
+                    <button class="boton boton--primario" type="button" data-accion="reiniciar">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 12a9 9 0 1 1-3-6.7"></path>
+                            <path d="M21 3v6h-6"></path>
+                        </svg>
+                        Reiniciar
+                    </button>
+                    <button class="boton-icono" type="button" data-accion="abrir-ayuda" aria-label="Cómo se juega" aria-haspopup="dialog">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.9.4-1.4 1-1.4 2"></path>
+                            <line x1="12" y1="17" x2="12" y2="17.01"></line>
+                        </svg>
+                    </button>
+                    <button class="boton-icono" type="button" data-accion="abrir-ajustes" aria-label="Ajustes de la partida" aria-haspopup="dialog">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
                     </button>
                 </div>
+            </header>
 
-                <div class="controles__grupo">
-                    <label class="controles__etiqueta" for="campo-n">Tamaño del tablero (N)</label>
-                    <input
-                        class="controles__campo"
-                        type="number"
-                        id="campo-n"
-                        min="3"
-                        step="1"
-                        value="4"
-                        data-control="n"
-                    >
+            <!-- Zona de juego: el tablero (vacío aquí, lo rellena TableroView.pintar
+                 con celdas [data-celda] y fichas [data-ficha]), la pista de uso y
+                 el aviso de victoria (aria-live, lo anuncian los lectores de pantalla). -->
+            <main class="zona-juego" aria-labelledby="zona-juego-titulo">
+                <h2 class="visualmente-oculto" id="zona-juego-titulo">Tablero de juego</h2>
+                <div class="tablero" data-tablero role="grid" aria-label="Tablero de juego"></div>
+                <p class="zona-juego__pista">Arrastra una ficha o selecciona origen y destino con el teclado (Enter / Espacio).</p>
+                <p class="zona-juego__estado" data-estado aria-live="polite"></p>
+            </main>
+
+        <!-- Modal de ayuda: asistencia sobre la mecánica del juego. Flota con
+             position (ver layout.css); gestionado por AyudaView. -->
+        <div class="respaldo respaldo--oculta" data-ayuda-respaldo></div>
+        <div class="modal modal--oculta" data-ayuda role="dialog" aria-modal="true" aria-labelledby="ayuda-titulo">
+            <div class="modal__contenido">
+                <div class="modal__cabecera">
+                    <h2 class="modal__titulo" id="ayuda-titulo">Cómo se juega</h2>
+                    <button class="boton-icono boton-icono--pequeno" type="button" data-accion="cerrar-ayuda" aria-label="Cerrar ayuda">×</button>
+                </div>
+                <div class="modal__seccion">
+                    <h3 class="modal__subtitulo">Objetivo</h3>
+                    <p class="modal__texto">Consigue que cada fila del tablero tenga fichas de un único tipo.</p>
                 </div>
 
-                <div class="controles__grupo" role="group" aria-labelledby="etiqueta-tamano">
-                    <span class="controles__etiqueta" id="etiqueta-tamano">Tamaño de ficha</span>
-                    <div class="controles__opciones">
-                        <label class="controles__opcion">
-                            <input type="radio" name="tamano-ficha" value="pequena" data-control="tamano">
-                            Pequeña
-                        </label>
-                        <label class="controles__opcion">
-                            <input type="radio" name="tamano-ficha" value="mediana" data-control="tamano" checked>
-                            Mediana
-                        </label>
-                        <label class="controles__opcion">
-                            <input type="radio" name="tamano-ficha" value="grande" data-control="tamano">
-                            Grande
-                        </label>
+                <div class="modal__seccion">
+                    <h3 class="modal__subtitulo">Mover fichas</h3>
+                    <ul class="modal__lista">
+                        <li><strong>Con ratón:</strong> arrastra una ficha y suéltala sobre otra celda para intercambiarlas.</li>
+                        <li><strong>Con teclado:</strong> mueve el foco con Tab, pulsa Enter o Espacio en la celda de origen y luego en la de destino.</li>
+                    </ul>
+                </div>
+
+                <div class="modal__seccion">
+                    <h3 class="modal__subtitulo">Personalizar la partida</h3>
+                    <p class="modal__texto">
+                        Desde el icono de ajustes (engranaje) puedes cambiar el tamaño del tablero, el tamaño de
+                        las fichas y su paleta de color. Cualquier cambio comienza una partida nueva.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de ajustes: tamaño de tablero (N), tamaño de ficha y paleta.
+             Cada control lleva data-control/data-valor; AjustesView los lee
+             para avisar al controlador y marcar el valor activo. -->
+        <div class="respaldo respaldo--oculta" data-ajustes-respaldo></div>
+        <div class="modal modal--oculta" data-controles role="dialog" aria-modal="true" aria-labelledby="ajustes-titulo">
+            <div class="modal__contenido">
+                <div class="modal__cabecera">
+                    <h2 class="modal__titulo" id="ajustes-titulo">Ajustes de la partida</h2>
+                    <button class="boton-icono boton-icono--pequeno" type="button" data-accion="cerrar-ajustes" aria-label="Cerrar ajustes">×</button>
+                </div>
+
+                <div class="modal__grupo">
+                    <span class="modal__etiqueta" id="etiqueta-n">Tamaño del tablero</span>
+                    <div class="segmentados" role="group" aria-labelledby="etiqueta-n">
+                        <button class="segmento" type="button" data-control="n" data-valor="3">3 × 3</button>
+                        <button class="segmento" type="button" data-control="n" data-valor="4">4 × 4</button>
+                        <button class="segmento" type="button" data-control="n" data-valor="5">5 × 5</button>
+                        <button class="segmento" type="button" data-control="n" data-valor="6">6 × 6</button>
+                    </div>
+                    <div class="modal__campo-n">
+                        <label class="modal__etiqueta" for="campo-n-personalizado">Personalizado</label>
+                        <input class="campo" type="number" id="campo-n-personalizado" min="3" step="1" data-control="n-personalizado">
                     </div>
                 </div>
 
-                <div class="controles__grupo">
-                    <button class="controles__boton" type="button" data-accion="cambiar-aspecto">
-                        Cambiar aspecto de las fichas
-                    </button>
+                <div class="modal__grupo">
+                    <span class="modal__etiqueta" id="etiqueta-tamano">Tamaño de ficha</span>
+                    <div class="segmentados" role="group" aria-labelledby="etiqueta-tamano">
+                        <button class="segmento" type="button" data-control="tamano" data-valor="pequena">Pequeña</button>
+                        <button class="segmento" type="button" data-control="tamano" data-valor="mediana">Mediana</button>
+                        <button class="segmento" type="button" data-control="tamano" data-valor="grande">Grande</button>
+                    </div>
                 </div>
 
-                <div class="controles__grupo">
-                    <button class="controles__boton" type="button" data-accion="abrir-ayuda" aria-haspopup="dialog">
-                        ¿Cómo se juega?
-                    </button>
+                <div class="modal__grupo">
+                    <span class="modal__etiqueta" id="etiqueta-paleta">Color de las fichas</span>
+                    <div class="muestras" role="group" aria-labelledby="etiqueta-paleta">
+                        <button class="muestra muestra--azul" type="button" data-control="paleta" data-valor="azul" aria-label="Paleta azul">
+                            <span class="muestra__forma muestra__forma--tipo-1" aria-hidden="true"></span>
+                            <span class="muestra__forma muestra__forma--tipo-2" aria-hidden="true"></span>
+                            <span class="muestra__forma muestra__forma--tipo-3" aria-hidden="true"></span>
+                        </button>
+                        <button class="muestra muestra--violeta" type="button" data-control="paleta" data-valor="violeta" aria-label="Paleta violeta">
+                            <span class="muestra__forma muestra__forma--tipo-1" aria-hidden="true"></span>
+                            <span class="muestra__forma muestra__forma--tipo-2" aria-hidden="true"></span>
+                            <span class="muestra__forma muestra__forma--tipo-3" aria-hidden="true"></span>
+                        </button>
+                        <button class="muestra muestra--terracota" type="button" data-control="paleta" data-valor="terracota" aria-label="Paleta terracota">
+                            <span class="muestra__forma muestra__forma--tipo-1" aria-hidden="true"></span>
+                            <span class="muestra__forma muestra__forma--tipo-2" aria-hidden="true"></span>
+                            <span class="muestra__forma muestra__forma--tipo-3" aria-hidden="true"></span>
+                        </button>
+                    </div>
                 </div>
-            </section>
 
-            <section class="zona-juego" aria-labelledby="zona-juego-titulo">
-                <h2 class="zona-juego__titulo visualmente-oculto" id="zona-juego-titulo">Tablero de juego</h2>
-                <div
-                    class="tablero"
-                    data-tablero
-                    role="grid"
-                    aria-label="Tablero de juego"
-                ></div>
-                <p class="zona-juego__estado" data-estado aria-live="polite"></p>
-            </section>
-        </main>
-
-        <div
-            class="ayuda ayuda--oculta"
-            data-ayuda
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="ayuda-titulo"
-        >
-            <div class="ayuda__contenido">
-                <button class="ayuda__cerrar" type="button" data-ayuda-cerrar aria-label="Cerrar ayuda">
-                    ×
-                </button>
-                <h2 class="ayuda__titulo" id="ayuda-titulo">Cómo se juega</h2>
-                <p class="ayuda__texto">
-                    El objetivo es conseguir que cada fila del tablero contenga fichas de un único tipo.
-                </p>
-                <ul class="ayuda__lista">
-                    <li>Arrastra una ficha y suéltala sobre otra celda para intercambiar su posición.</li>
-                    <li>
-                        Sin ratón: pulsa una celda para seleccionarla y pulsa otra celda para intercambiarlas.
-                        Usa Tab para moverte entre celdas y Enter o Espacio para seleccionar.
-                    </li>
-                    <li>
-                        Cambiar el tamaño N, el tamaño de las fichas o su aspecto comienza una partida nueva.
-                    </li>
-                </ul>
+                <button class="boton boton--fantasma" type="button" data-accion="cerrar-ajustes">Cerrar</button>
             </div>
         </div>
     </div>

@@ -1,4 +1,8 @@
-/* reset.css — Reset unificado */
+/* reset.css — Reset unificado.
+   Neutraliza los estilos por defecto del navegador (márgenes, listas,
+   bordes de formulario...) para que toda la apariencia salga de
+   variables.css/layout.css/components.css, nunca de los valores nativos
+   del user-agent. Es la primera hoja cargada en el <head>. */
 
 * {
     margin: 0;
@@ -6,6 +10,7 @@
     box-sizing: border-box;
 }
 
+/* Permite que body: min-height: 100% llegue a ocupar toda la ventana. */
 html {
     height: 100%;
 }
@@ -14,12 +19,14 @@ body {
     min-height: 100%;
 }
 
+/* Las imágenes/SVG no dejan hueco extra bajo la línea base y no desbordan su contenedor. */
 img,
 svg {
     display: block;
     max-width: 100%;
 }
 
+/* Los controles de formulario heredan tipografía y color de la interfaz en vez del estilo nativo del sistema. */
 button,
 input,
 select {
@@ -33,6 +40,7 @@ button {
     cursor: pointer;
 }
 
+/* Sin viñetas/numeración por defecto: cada lista decide su propio estilo en components.css si lo necesita. */
 ul,
 ol {
     list-style: none;

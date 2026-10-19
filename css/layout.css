@@ -1,72 +1,69 @@
-/* layout.css — Composición: Grid y Flexbox en todos los nodos intermedios */
+/* layout.css — Composición: Grid y Flexbox en todos los nodos intermedios.
+   Sin tarjeta contenedora: la cabecera y el tablero viven directamente sobre
+   el fondo de la página. Sin scroll: el espacio sobrante se centra
+   verticalmente (justify-content: center en .zona-juego). */
 
 body {
     min-height: 100vh;
     font-family: var(--fuente-interfaz);
     color: var(--color-texto);
-    background-color: var(--color-fondo);
+    background: linear-gradient(135deg, var(--color-fondo-a), var(--color-fondo-b));
 }
 
+/* .pagina: columna Flexbox de arriba a abajo (cabecera, zona de juego).
+   Es una pila unidimensional, por eso Flexbox y no Grid. `relative` sirve
+   solo de ancla de posicionamiento para los modales que flotan dentro. */
 .pagina {
     position: relative;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    min-height: 100vh;
-    gap: var(--espacio-l);
-    padding: var(--espacio-l) var(--espacio-m);
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: var(--espacio-xl);
+    display: flex;
+    flex-direction: column;
 }
 
+/* Cabecera: fila Flexbox con el título a un lado y las acciones al otro. */
 .cabecera {
+    flex: 0 0 auto;
     display: flex;
-    justify-content: center;
-}
-
-.contenido {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    gap: var(--espacio-xl);
-}
-
-@media (min-width: 60rem) {
-    .contenido {
-        grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
-        justify-items: stretch;
-        align-items: start;
-    }
-}
-
-.controles {
-    display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     gap: var(--espacio-m);
+    padding-block-end: var(--espacio-m);
 }
 
-.controles__grupo {
+.cabecera__titulo-grupo {
     display: flex;
     flex-direction: column;
-    gap: var(--espacio-xs);
+    gap: 0.15rem;
 }
 
-.controles__opciones {
+/* Grupo de marcadores + botones de la cabecera: una sola línea, Flexbox. */
+.cabecera__acciones {
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     gap: var(--espacio-s);
 }
 
-.controles__opcion {
-    display: flex;
-    align-items: center;
-    gap: var(--espacio-xs);
-}
-
+/* Zona de juego: ocupa el espacio restante de .pagina y centra el tablero
+   tanto en horizontal como en vertical, para que nunca aparezca scroll. */
 .zona-juego {
+    flex: 1 1 auto;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--espacio-s);
+    justify-content: center;
+    gap: var(--espacio-m);
+    padding: var(--espacio-l);
+    box-sizing: border-box;
 }
 
+/* El tablero es bidimensional por definición (matriz NxN), así que es el
+   único nodo que usa Grid en vez de Flexbox. N es variable y llega desde JS
+   como custom property --n (ver TableroView.pintar); nunca se escribe
+   gridTemplateColumns directamente. */
 .tablero {
     display: grid;
     grid-template-columns: repeat(var(--n), 1fr);
@@ -76,23 +73,89 @@ body {
     aspect-ratio: 1;
 }
 
+/* Contenido de una celda: Flexbox de un solo elemento, solo para centrar la ficha. */
 .tablero__celda {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.ayuda {
+.segmentados {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.muestras {
+    display: flex;
+    gap: var(--espacio-s);
+}
+
+.muestra {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.modal__campo-n {
+    display: flex;
+    align-items: center;
+    gap: var(--espacio-xs);
+}
+
+/* Capa de fondo oscuro detrás de un modal. position: absolute es el único
+   modo de salir del flujo y cubrir toda la página sin desplazar nada. */
+.respaldo {
     position: absolute;
-    inset-block-start: var(--espacio-xl);
-    inset-inline: 0;
-    margin-inline: auto;
-    width: min(90vw, 32rem);
-    max-height: 80vh;
-    overflow-y: auto;
+    inset: 0;
     z-index: 10;
 }
 
+/* El modal (ayuda o ajustes) flota sobre el resto de la interfaz: relative
+   en .pagina + absolute aquí, con z-index explícito por encima del
+   respaldo. Nunca se usa este patrón para tablero/celdas/controles. */
+.modal {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal__contenido {
+    width: min(24rem, 90%);
+    max-height: 85vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: var(--espacio-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacio-m);
+}
+
+.modal__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal__grupo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacio-xs);
+}
+
+.modal__lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacio-xs);
+    padding-inline-start: var(--espacio-m);
+    list-style: disc;
+}
+
+/* Oculta visualmente un texto sin quitarlo del árbol de accesibilidad
+   (lo siguen leyendo los lectores de pantalla). Técnica estándar, no
+   maqueta nada: por eso el position aquí no cuenta como excepción a la regla de layout. */
 .visualmente-oculto {
     position: absolute;
     width: 0.0625rem;
