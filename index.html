@@ -73,7 +73,7 @@
                 <h2 class="visualmente-oculto" id="zona-juego-titulo">Tablero de juego</h2>
                 <div class="tablero" data-tablero role="grid" aria-label="Tablero de juego"></div>
                 <p class="zona-juego__pista">Arrastra una ficha o selecciona origen y destino con el teclado (Enter / Espacio).</p>
-                <p class="zona-juego__estado" data-estado aria-live="polite"></p>
+                <div class="zona-juego__estado" data-estado aria-live="polite"></div>
             </main>
 
         <!-- Modal de ayuda: asistencia sobre la mecánica del juego. Flota con
@@ -101,14 +101,16 @@
                 <div class="modal__seccion">
                     <h3 class="modal__subtitulo">Personalizar la partida</h3>
                     <p class="modal__texto">
-                        Desde el icono de ajustes (engranaje) puedes cambiar el tamaño del tablero, el tamaño de
-                        las fichas y su paleta de color. Cualquier cambio comienza una partida nueva.
+                        Desde el icono de ajustes (engranaje) puedes cambiar el tamaño del tablero, el tamaño,
+                        la forma y la paleta de color de las fichas. Forma y color se eligen por separado: se
+                        pueden combinar libremente. Cualquier cambio comienza una partida nueva.
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- Modal de ajustes: tamaño de tablero (N), tamaño de ficha y paleta.
+        <!-- Modal de ajustes: tamaño de tablero (N), tamaño de ficha, conjunto
+             de formas y paleta de color (forma y color, ejes independientes).
              Cada control lleva data-control/data-valor; AjustesView los lee
              para avisar al controlador y marcar el valor activo. -->
         <div class="respaldo respaldo--oculta" data-ajustes-respaldo></div>
@@ -129,8 +131,10 @@
                     </div>
                     <div class="modal__campo-n">
                         <label class="modal__etiqueta" for="campo-n-personalizado">Personalizado</label>
-                        <input class="campo" type="number" id="campo-n-personalizado" min="3" step="1" data-control="n-personalizado">
+                        <input class="campo" type="number" id="campo-n-personalizado" min="3" step="1"
+                            data-control="n-personalizado" aria-describedby="error-n">
                     </div>
+                    <p class="modal__error" id="error-n" data-error-n aria-live="polite"></p>
                 </div>
 
                 <div class="modal__grupo">
@@ -142,23 +146,90 @@
                     </div>
                 </div>
 
+                <!-- Forma y color son ejes independientes (ver Configuracion.js).
+                     Este selector enseña SOLO la forma, deliberadamente sin color
+                     (forma-ficha__cuerpo--neutra, un gris fijo): el color no se
+                     decide aquí, así que no insinúa ninguno. AjustesView repinta
+                     los botones de paleta de más abajo con estas mismas formas, ya
+                     coloreadas, cada vez que aquí cambia la selección. -->
+                <div class="modal__grupo">
+                    <span class="modal__etiqueta" id="etiqueta-forma">Forma de las fichas</span>
+                    <div class="muestras" role="group" aria-labelledby="etiqueta-forma">
+                        <button class="muestra" type="button" data-control="forma" data-valor="clasica" aria-label="Formas clásicas: círculo, cuadrado y rombo">
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <circle class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" cx="50" cy="50" r="42"></circle>
+                                </svg>
+                            </span>
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <rect class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" x="10" y="10" width="80" height="80" rx="20"></rect>
+                                </svg>
+                            </span>
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <polygon class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" points="50,6 94,50 50,94 6,50"></polygon>
+                                </svg>
+                            </span>
+                        </button>
+                        <button class="muestra" type="button" data-control="forma" data-valor="angular" aria-label="Formas angulares: triángulo, hexágono y cruz">
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <polygon class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" points="50,8 92,86 8,86"></polygon>
+                                </svg>
+                            </span>
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <polygon class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" points="50,6 90,28 90,72 50,94 10,72 10,28"></polygon>
+                                </svg>
+                            </span>
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <polygon class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" points="38,8 62,8 62,34 88,34 88,62 62,62 62,92 38,92 38,62 12,62 12,34 38,34"></polygon>
+                                </svg>
+                            </span>
+                        </button>
+                        <button class="muestra" type="button" data-control="forma" data-valor="estrellada" aria-label="Formas estrelladas: óvalo, pentágono y estrella">
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <ellipse class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" cx="50" cy="50" rx="46" ry="32"></ellipse>
+                                </svg>
+                            </span>
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <polygon class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" points="50,6 91.9,36.4 75.9,85.6 24.1,85.6 8.2,36.4"></polygon>
+                                </svg>
+                            </span>
+                            <span class="muestra__forma" aria-hidden="true">
+                                <svg class="forma-ficha" viewBox="0 0 100 100" focusable="false">
+                                    <polygon class="forma-ficha__cuerpo forma-ficha__cuerpo--neutra" points="50,4 61.2,34.6 93.8,35.8 68.1,55.9 77,87.2 50,69 23,87.2 31.9,55.9 6.3,35.8 38.8,34.6"></polygon>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Los 3 huecos [data-paleta-forma] de cada botón los rellena
+                     AjustesView con crearFormaSvg(tipo, conjuntoFormas ACTUAL): así
+                     el selector de color enseña siempre la forma de verdad elegida,
+                     ya en su color. Vacíos aquí a propósito (JS los pinta al arrancar). -->
                 <div class="modal__grupo">
                     <span class="modal__etiqueta" id="etiqueta-paleta">Color de las fichas</span>
                     <div class="muestras" role="group" aria-labelledby="etiqueta-paleta">
                         <button class="muestra muestra--azul" type="button" data-control="paleta" data-valor="azul" aria-label="Paleta azul">
-                            <span class="muestra__forma muestra__forma--tipo-1" aria-hidden="true"></span>
-                            <span class="muestra__forma muestra__forma--tipo-2" aria-hidden="true"></span>
-                            <span class="muestra__forma muestra__forma--tipo-3" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="0" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="1" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="2" aria-hidden="true"></span>
                         </button>
                         <button class="muestra muestra--violeta" type="button" data-control="paleta" data-valor="violeta" aria-label="Paleta violeta">
-                            <span class="muestra__forma muestra__forma--tipo-1" aria-hidden="true"></span>
-                            <span class="muestra__forma muestra__forma--tipo-2" aria-hidden="true"></span>
-                            <span class="muestra__forma muestra__forma--tipo-3" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="0" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="1" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="2" aria-hidden="true"></span>
                         </button>
                         <button class="muestra muestra--terracota" type="button" data-control="paleta" data-valor="terracota" aria-label="Paleta terracota">
-                            <span class="muestra__forma muestra__forma--tipo-1" aria-hidden="true"></span>
-                            <span class="muestra__forma muestra__forma--tipo-2" aria-hidden="true"></span>
-                            <span class="muestra__forma muestra__forma--tipo-3" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="0" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="1" aria-hidden="true"></span>
+                            <span class="muestra__forma" data-paleta-forma="2" aria-hidden="true"></span>
                         </button>
                     </div>
                 </div>

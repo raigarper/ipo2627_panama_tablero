@@ -90,17 +90,6 @@ export class Tablero {
     }
 
     /**
-     * Copia profunda: nueva matriz con Fichas nuevas, para que modificar la
-     * copia no afecte al original.
-     * @returns {Tablero}
-     */
-    clonar() {
-        const copia = new Tablero(this.#n);
-        copia.#celdas = this.#celdas.map((filaCeldas) => filaCeldas.map((ficha) => ficha.clonar()));
-        return copia;
-    }
-
-    /**
      * Recorre todas las celdas en orden de fila y columna. Es el único
      * punto de lectura que usa la vista para pintar el tablero completo.
      * @param {(ficha: Ficha, fila: number, columna: number) => void} manejador

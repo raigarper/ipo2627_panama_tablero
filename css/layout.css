@@ -122,10 +122,10 @@ body {
     justify-content: center;
 }
 
+/* Sin max-height/overflow-y a propósito: el modal nunca lleva scroll
+   interno, crece con su contenido. */
 .modal__contenido {
-    width: min(24rem, 90%);
-    max-height: 85vh;
-    overflow-y: auto;
+    width: min(32rem, 92%);
     box-sizing: border-box;
     padding: var(--espacio-l);
     display: flex;

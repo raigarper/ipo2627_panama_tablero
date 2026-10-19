@@ -33,13 +33,4 @@ export class Ficha {
     get tipo() {
         return this.#tipo;
     }
-
-    /**
-     * Crea una ficha nueva con el mismo tipo. Se usa para clonar un Tablero
-     * sin compartir referencias con el original (p. ej. al duplicar estado).
-     * @returns {Ficha}
-     */
-    clonar() {
-        return new Ficha(this.#tipo);
-    }
 }

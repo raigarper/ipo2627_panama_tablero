@@ -7,6 +7,8 @@
 // repintar. El controlador, a su vez, NO toca el DOM: solo llama a métodos
 // públicos de las vistas (`pintar`, `actualizar`, `abrir`, `cerrar`...).
 
+import { Configuracion } from "../models/Configuracion.js";
+
 /** Cada cuánto se refresca el cronómetro de la cabecera mientras no hay movimientos. */
 const INTERVALO_RELOJ_MS = 1000;
 
@@ -67,9 +69,17 @@ export class AppController {
      * Cambia la dimensión del tablero. Como pide el enunciado, cambiar N
      * siempre crea una partida nueva (nunca se conserva la disposición
      * anterior).
+     *
+     * Si `n` no cumple la regla del dominio (entero >= 3), la petición se
+     * rechaza y se le pide a AjustesView que muestre el aviso de error; la
+     * vista no decide esto por sí misma, solo lo refleja.
      * @param {number} n
      */
     cambiarN(n) {
+        if (!Configuracion.validarN(n)) {
+            this.#ajustesView.mostrarErrorN(true);
+            return;
+        }
         this.#configuracion = this.#configuracion.conN(n);
         this.#ajustesView.actualizar(this.#configuracion);
         this.#modelo.reiniciar(this.#configuracion.n);
@@ -87,7 +97,21 @@ export class AppController {
     }
 
     /**
-     * Cambia la paleta de color de las fichas. También crea una partida nueva.
+     * Cambia el conjunto de formas de las fichas (p. ej. de "clasica" a
+     * "angular"). Es un eje independiente de la paleta de color: cambiarlo
+     * no toca `paleta` en Configuracion. También crea una partida nueva.
+     * @param {string} conjuntoFormas
+     */
+    cambiarFormaFicha(conjuntoFormas) {
+        this.#configuracion = this.#configuracion.conConjuntoFormas(conjuntoFormas);
+        this.#ajustesView.actualizar(this.#configuracion);
+        this.#modelo.reiniciar(this.#configuracion.n);
+    }
+
+    /**
+     * Cambia la paleta de color de las fichas. Es un eje independiente del
+     * conjunto de formas: cambiarla no toca `conjuntoFormas` en
+     * Configuracion. También crea una partida nueva.
      * @param {string} paleta
      */
     cambiarPaleta(paleta) {

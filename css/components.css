@@ -90,6 +90,19 @@
             color: var(--color-acento-texto);
         }
     }
+
+    /* Botón "Jugar de nuevo" del aviso de victoria: mismo patrón que
+       --primario pero en verde, a juego con el propio aviso. */
+    &.boton--exito {
+        border: 0.0625rem solid var(--color-exito);
+        background: var(--color-exito);
+        color: var(--color-acento-texto);
+
+        &:hover {
+            background: var(--color-exito-hover);
+            border-color: var(--color-exito-hover);
+        }
+    }
 }
 
 /* Botón circular solo-icono (ayuda, ajustes, cerrar modal). */
@@ -154,16 +167,64 @@
     text-align: center;
     font-size: var(--fuente-tamano-pista);
     color: var(--color-texto-suave);
-    max-width: 24rem;
 }
 
-/* Mensaje de victoria (aria-live en el HTML: lo anuncian los lectores de pantalla). */
+/* Contenedor del aviso de victoria (aria-live en el HTML: lo anuncian los
+   lectores de pantalla). Vacío mientras no se gana; con min-height para que
+   su aparición no desplace el resto de la zona de juego de golpe. Ocupa el
+   ancho completo de .zona-juego para poder centrar y limitar el aviso con
+   un `max-width` propio (ver .victoria) sin que se salga de la página. */
 .zona-juego__estado {
+    width: 100%;
+    min-height: 1.2em;
+    /* Sin esto, .zona-juego (flex-column, altura fija por .pagina) podía
+       encoger este aviso por debajo de su contenido cuando el tablero es
+       grande y sobra poco alto: el texto y el botón se salían de la caja
+       verde en vez de hacer que la caja creciera. flex-shrink: 0 fuerza a
+       que SIEMPRE ocupe su alto real, nunca menos. */
+    flex-shrink: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+}
+
+/* Aviso de victoria: siempre en verde (--color-exito es un tono fijo, no
+   depende de la paleta de fichas elegida) para que "has ganado" se
+   reconozca de un vistazo. Incluye el propio botón para empezar otra
+   partida: no hace falta ir hasta la cabecera para jugar de nuevo. */
+.victoria {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--espacio-xs) var(--espacio-s);
+    max-width: min(28rem, 100%);
+    box-sizing: border-box;
+    padding: var(--espacio-s) var(--espacio-m);
+    background: var(--color-exito-fondo);
+    border: 0.0938rem solid var(--color-exito);
+    border-radius: var(--radio-segmento);
+}
+
+.victoria__icono {
+    flex: 0 0 auto;
+    font-size: 1.1rem;
+    font-weight: var(--peso-titulo);
+    line-height: 1;
+    color: var(--color-exito);
+}
+
+.victoria__texto {
+    flex: 1 1 14rem;
+    min-width: 0;
     margin: 0;
     text-align: center;
     font-weight: var(--peso-realce);
     color: var(--color-exito);
-    min-height: 1.2em;
+}
+
+.victoria__boton {
+    flex: 0 0 auto;
 }
 
 /* --- Bloque: tablero ---
@@ -206,17 +267,28 @@
         outline-offset: 0.2rem;
     }
 
-    /* Las familias triádicas se repiten cada 120°, así que para que dos
-       paletas se perciban realmente distintas (y no la misma con los colores
-       rotados entre fichas) sus tonos base deben quedar separados ~40°
-       entre sí dentro de ese ciclo de 120°: 210→familia 90, 295→familia 55,
-       15→familia 15. */
+    /* Cada paleta cambia los TRES ejes a la vez (tono + saturación +
+       luminosidad), no solo el tono: así no son "el mismo azul girado" sino
+       que cada una tiene su propio carácter.
+         - azul (tono base, :root): vívida y clara — confianza, energía.
+         - violeta: tono más saturado y bastante más oscuro — intensa,
+           misteriosa, de joya.
+         - terracota: tono bastante menos saturado — cálida y terrosa,
+           contenida frente a las otras dos.
+       Tocar una paleta es tocar solo estas 3 líneas; .forma-ficha__cuerpo
+       no cambia. Los tonos quedan muy separados entre sí (210/265/20, los
+       tres a más de 50° unos de otros) y lejos de los tonos fijos de la
+       interfaz (--tono-interfaz, --tono-exito, --tono-error). */
     &.tablero--paleta-violeta {
-        --tono-fichas: 295;
+        --tono-fichas: 265;
+        --saturacion-fichas: 70%;
+        --luminosidad-fichas: 40%;
     }
 
     &.tablero--paleta-terracota {
-        --tono-fichas: 15;
+        --tono-fichas: 20;
+        --saturacion-fichas: 44%;
+        --luminosidad-fichas: 52%;
     }
 }
 
@@ -224,78 +296,80 @@
    Semejanza (Gestalt): cada tipo se distingue SIEMPRE por forma y color a
    la vez (nunca solo por color, para usuarios que no distinguen colores).
    El tipo lo decide el modelo (Ficha.tipo); esta clase solo traduce ese
-   número en apariencia — la vista nunca sabe qué significa el tipo. */
+   número en apariencia — la vista nunca sabe qué significa el tipo.
+   La propia forma la dibuja .forma-ficha (SVG), no esta clase: aquí solo
+   se dimensiona el hueco que ocupa dentro de la celda y se anima su
+   estado de arrastre. */
 .ficha {
     width: calc(var(--escala-ficha) * 100%);
     aspect-ratio: 1;
-    border-width: 0.1875rem;
-    border-style: solid;
     position: relative;
     transition: opacity 150ms ease;
 
-    /* Tipo 1: círculo. */
-    &.ficha--tipo-1 {
-        background: radial-gradient(circle at 32% 28%,
-            hsl(var(--tono-fichas) 68% 72%) 0%,
-            hsl(var(--tono-fichas) 60% 54%) 55%,
-            hsl(var(--tono-fichas) 55% 42%) 100%);
-        border-color: hsl(var(--tono-fichas) 55% 30%);
-        box-shadow:
-            inset 0 0.2rem 0.35rem hsl(0 0% 100% / 0.6),
-            inset 0 -0.3rem 0.5rem hsl(var(--tono-fichas) 60% 18% / 0.4),
-            0 0.5rem 0.9rem hsl(var(--tono-fichas) 55% 25% / 0.35);
-        border-radius: 50%;
-    }
-
-    /* Tipo 2: cuadrado redondeado. +120° sobre --tono-fichas (triádico). */
-    &.ficha--tipo-2 {
-        background: radial-gradient(circle at 32% 28%,
-            hsl(calc(var(--tono-fichas) + 120) 68% 74%) 0%,
-            hsl(calc(var(--tono-fichas) + 120) 60% 56%) 55%,
-            hsl(calc(var(--tono-fichas) + 120) 55% 44%) 100%);
-        border-color: hsl(calc(var(--tono-fichas) + 120) 55% 30%);
-        box-shadow:
-            inset 0 0.2rem 0.35rem hsl(0 0% 100% / 0.6),
-            inset 0 -0.3rem 0.5rem hsl(calc(var(--tono-fichas) + 120) 60% 18% / 0.4),
-            0 0.5rem 0.9rem hsl(calc(var(--tono-fichas) + 120) 55% 25% / 0.35);
-        border-radius: 26%;
-    }
-
-    /* Tipo 3: rombo. +240° sobre --tono-fichas (triádico).
-       CONOCIDO: se consigue rotando un cuadrado 45° con `transform`, lo que
-       provoca que la imagen fantasma del drag (que el navegador genera a
-       partir de la caja SIN aplicar transform) se vea como un cuadrado
-       mientras se arrastra, y solo recupere la forma de rombo al soltar.
-       Pendiente de resolver migrando esta forma a SVG inline (geometría
-       real con <polygon>, sin transform de por medio). */
-    &.ficha--tipo-3 {
-        background: radial-gradient(circle at 32% 28%,
-            hsl(calc(var(--tono-fichas) + 240) 65% 70%) 0%,
-            hsl(calc(var(--tono-fichas) + 240) 55% 52%) 55%,
-            hsl(calc(var(--tono-fichas) + 240) 50% 40%) 100%);
-        border-color: hsl(calc(var(--tono-fichas) + 240) 50% 28%);
-        box-shadow:
-            inset 0 0.2rem 0.35rem hsl(0 0% 100% / 0.6),
-            inset 0 -0.3rem 0.5rem hsl(calc(var(--tono-fichas) + 240) 55% 16% / 0.4),
-            0 0.5rem 0.9rem hsl(calc(var(--tono-fichas) + 240) 50% 22% / 0.35);
-        border-radius: 26%;
-        transform: rotate(45deg);
-    }
-
-    /* Estado de arrastre (aplicado por TableroView en dragstart/dragend). */
     &.ficha--en-arrastre {
         opacity: 0.5;
     }
 }
 
-/* Las tres paletas comparten SIEMPRE las mismas formas (círculo/cuadrado/rombo)
-   y la misma técnica de relieve; usar clip-path para variar la forma recorta
-   también el box-shadow del relieve y rompe el efecto 3D, así que no se hace.
-   Lo único que cambia entre paletas es el tono base de las fichas. */
+/* --- Bloque: forma-ficha ---
+   Geometría SVG real (círculo/cuadrado/rombo) compartida por .ficha (en el
+   tablero) y .muestra (en Ajustes): ambas insertan este mismo bloque dentro
+   de un contenedor que le da tamaño. Al dibujarse con <circle>/<rect>/
+   <polygon> reales en vez de con `border-radius` + `transform: rotate()`,
+   el rombo ya NO cambia de silueta durante el Drag & Drop: la imagen
+   fantasma del navegador se genera a partir de la geometría real, no de
+   una rotación CSS que esa imagen ignoraba. Esto corrige el bug conocido
+   de versiones anteriores (el rombo se veía como un cuadrado al arrastrar).
+   Estilo plano a propósito: solo relleno + trazo, sin brillo ni sombra
+   proyectada. */
+.forma-ficha {
+    width: 100%;
+    height: 100%;
+}
 
-/* --- Bloque: muestra (botón de paleta en Ajustes) ---
-   Repite en miniatura las mismas tres formas/colores que .ficha, para que
-   el usuario vea de antemano qué aspecto tendrán las fichas de esa paleta. */
+.forma-ficha__cuerpo {
+    stroke-width: 5;
+    /* El trazo siempre más oscuro que el relleno, misma saturación: basta
+       bajar la luminosidad un tramo fijo. Así el contorno se ve bien tanto
+       en una paleta clara (azul) como en una ya de por sí oscura (violeta). */
+    --luminosidad-ficha-borde: calc(var(--luminosidad-fichas) - 24%);
+
+    /* Tipo 1: círculo. Usa --tono-fichas tal cual. */
+    &.forma-ficha__cuerpo--tipo-1 {
+        fill: hsl(var(--tono-fichas) var(--saturacion-fichas) var(--luminosidad-fichas));
+        stroke: hsl(var(--tono-fichas) var(--saturacion-fichas) var(--luminosidad-ficha-borde));
+    }
+
+    /* Tipo 2: cuadrado redondeado. +120° sobre --tono-fichas (triádico). */
+    &.forma-ficha__cuerpo--tipo-2 {
+        fill: hsl(calc(var(--tono-fichas) + 120) var(--saturacion-fichas) var(--luminosidad-fichas));
+        stroke: hsl(calc(var(--tono-fichas) + 120) var(--saturacion-fichas) var(--luminosidad-ficha-borde));
+    }
+
+    /* Tipo 3: rombo. +240° sobre --tono-fichas (triádico). */
+    &.forma-ficha__cuerpo--tipo-3 {
+        fill: hsl(calc(var(--tono-fichas) + 240) var(--saturacion-fichas) var(--luminosidad-fichas));
+        stroke: hsl(calc(var(--tono-fichas) + 240) var(--saturacion-fichas) var(--luminosidad-ficha-borde));
+    }
+
+    /* Variante sin color, solo para el selector de forma de Ajustes: ese
+       selector elige la FORMA, nunca el color, así que no debe insinuar
+       ningún tono concreto. Gris derivado de --tono-interfaz, igual que el
+       resto del chrome de controles. */
+    &.forma-ficha__cuerpo--neutra {
+        fill: hsl(var(--tono-interfaz) 10% 75%);
+        stroke: hsl(var(--tono-interfaz) 15% 40%);
+    }
+}
+
+/* --- Bloque: muestra (botón visual de Ajustes: forma o paleta) ---
+   Chrome común (fondo, borde, estado activo) para los botones de los dos
+   selectores independientes. El de forma usa formas en gris
+   (forma-ficha__cuerpo--neutra, ver arriba): aquí no se elige color. El de
+   paleta usa esas MISMAS formas ya coloreadas con el tono de cada botón,
+   pero las rellena AjustesView por JS (ver [data-paleta-forma] en
+   index.html) con el conjunto de formas actualmente elegido, para que este
+   selector enseñe siempre la combinación real forma + color. */
 .muestra {
     padding: 0.4rem 0.55rem;
     border-radius: 0.8rem;
@@ -312,48 +386,37 @@
         border-color: var(--color-acento);
     }
 
+    /* Mismos tres valores que .tablero--paleta-* (ver más arriba): la
+       previsualización de cada botón debe ser idéntica al resultado real. */
     &.muestra--azul {
         --tono-fichas: 210;
+        --saturacion-fichas: 60%;
+        --luminosidad-fichas: 54%;
     }
 
     &.muestra--violeta {
-        --tono-fichas: 295;
+        --tono-fichas: 265;
+        --saturacion-fichas: 70%;
+        --luminosidad-fichas: 40%;
     }
 
     &.muestra--terracota {
-        --tono-fichas: 15;
+        --tono-fichas: 20;
+        --saturacion-fichas: 44%;
+        --luminosidad-fichas: 52%;
     }
 }
 
+/* Solo dimensiona el hueco; el color y la forma reales los pone .forma-ficha. */
 .muestra__forma {
+    display: block;
     width: 1.1rem;
     aspect-ratio: 1;
-    border-width: 0.0625rem;
-    border-style: solid;
-
-    &.muestra__forma--tipo-1 {
-        background: radial-gradient(circle at 32% 28%, hsl(var(--tono-fichas) 68% 72%) 0%, hsl(var(--tono-fichas) 60% 54%) 55%, hsl(var(--tono-fichas) 55% 42%) 100%);
-        border-color: hsl(var(--tono-fichas) 55% 30%);
-        border-radius: 50%;
-    }
-
-    &.muestra__forma--tipo-2 {
-        background: radial-gradient(circle at 32% 28%, hsl(calc(var(--tono-fichas) + 120) 68% 74%) 0%, hsl(calc(var(--tono-fichas) + 120) 60% 56%) 55%, hsl(calc(var(--tono-fichas) + 120) 55% 44%) 100%);
-        border-color: hsl(calc(var(--tono-fichas) + 120) 55% 30%);
-        border-radius: 26%;
-    }
-
-    &.muestra__forma--tipo-3 {
-        background: radial-gradient(circle at 32% 28%, hsl(calc(var(--tono-fichas) + 240) 65% 70%) 0%, hsl(calc(var(--tono-fichas) + 240) 55% 52%) 55%, hsl(calc(var(--tono-fichas) + 240) 50% 40%) 100%);
-        border-color: hsl(calc(var(--tono-fichas) + 240) 50% 28%);
-        border-radius: 26%;
-        transform: rotate(45deg);
-    }
 }
 
 /* --- Bloque: campo de formulario (N personalizado) --- */
 .campo {
-    border: 0.0625rem solid var(--color-borde);
+    border: 0.0938rem solid var(--color-borde);
     border-radius: var(--radio-boton);
     padding: 0.45rem 0.7rem;
     background: var(--color-panel);
@@ -361,6 +424,24 @@
     font-size: 0.85rem;
     width: 4.5rem;
     box-sizing: border-box;
+    transition: border-color 150ms ease;
+
+    /* Feedback visual de validación: el modelo (Configuracion.validarN)
+       decide si N es válido; el controlador se lo comunica a AjustesView,
+       que solo se limita a reflejarlo aquí con una clase modificadora. */
+    &.campo--invalido {
+        border-color: var(--color-error);
+    }
+}
+
+/* Mensaje de error bajo el campo personalizado. Vacío = sin error: el hueco
+   se reserva siempre (min-height) para que el resto del modal no salte. */
+.modal__error {
+    margin: 0;
+    font-size: 0.76rem;
+    font-weight: var(--peso-realce);
+    color: var(--color-error);
+    min-height: 1.1em;
 }
 
 /* --- Bloque: respaldo y modal (ayuda/ajustes) ---

@@ -9,10 +9,13 @@
 // responsabilidad del modelo. Esta vista solo recoge (fila, columna) y se
 // las pasa al controlador a través del callback `alSolicitarIntercambio`.
 
+import { crearFormaSvg } from "./formaFicha.js";
+
 export class TableroView {
     #contenedor;
     #elementoEstado;
     #alSolicitarIntercambio;
+    #alReiniciar;
     /** Celda marcada como origen por la alternativa de teclado (null si no hay ninguna). */
     #celdaSeleccionada = null;
 
@@ -20,12 +23,16 @@ export class TableroView {
      * @param {HTMLElement} contenedor - El elemento `[data-tablero]`.
      * @param {HTMLElement} elementoEstado - Elemento `aria-live` donde se
      *   anuncia la victoria para lectores de pantalla.
-     * @param {{alSolicitarIntercambio: (f1:number,c1:number,f2:number,c2:number)=>void}} callbacks
+     * @param {{
+     *   alSolicitarIntercambio: (f1:number,c1:number,f2:number,c2:number)=>void,
+     *   alReiniciar: ()=>void,
+     * }} callbacks
      */
-    constructor(contenedor, elementoEstado, { alSolicitarIntercambio }) {
+    constructor(contenedor, elementoEstado, { alSolicitarIntercambio, alReiniciar }) {
         this.#contenedor = contenedor;
         this.#elementoEstado = elementoEstado;
         this.#alSolicitarIntercambio = alSolicitarIntercambio;
+        this.#alReiniciar = alReiniciar;
 
         // Los tres eventos imprescindibles del contrato de Drag & Drop:
         // dragstart en el origen, dragover y drop en el destino.
@@ -74,17 +81,51 @@ export class TableroView {
             );
 
             const fichaElemento = document.createElement("div");
-            fichaElemento.classList.add("ficha", `ficha--tipo-${ficha.tipo + 1}`);
+            fichaElemento.classList.add("ficha");
             fichaElemento.dataset.ficha = "";
             fichaElemento.draggable = true;
+            fichaElemento.appendChild(crearFormaSvg(ficha.tipo, configuracion.conjuntoFormas));
 
             celda.appendChild(fichaElemento);
             this.#contenedor.appendChild(celda);
         });
 
-        this.#elementoEstado.textContent = resuelto
-            ? "¡Tablero resuelto! Cada fila tiene fichas de un único tipo."
-            : "";
+        this.#elementoEstado.textContent = "";
+        if (resuelto) {
+            this.#elementoEstado.appendChild(this.#crearBannerVictoria());
+        }
+    }
+
+    /**
+     * Aviso de victoria: icono + mensaje + botón para empezar otra partida
+     * sin tener que ir hasta el botón "Reiniciar" de la cabecera. El botón
+     * dispara el mismo callback `alReiniciar` que usa CabeceraView; esta
+     * vista no decide qué significa "reiniciar", solo ofrece otro punto
+     * desde el que pedirlo.
+     * @returns {HTMLDivElement}
+     */
+    #crearBannerVictoria() {
+        const victoria = document.createElement("div");
+        victoria.classList.add("victoria");
+
+        const icono = document.createElement("span");
+        icono.classList.add("victoria__icono");
+        icono.setAttribute("aria-hidden", "true");
+        icono.textContent = "✓";
+
+        const texto = document.createElement("p");
+        texto.classList.add("victoria__texto");
+        texto.textContent = "¡Tablero resuelto! Cada fila tiene fichas de un único tipo.";
+
+        const boton = document.createElement("button");
+        boton.classList.add("boton", "boton--exito", "victoria__boton");
+        boton.type = "button";
+        boton.dataset.accion = "jugar-de-nuevo";
+        boton.textContent = "Jugar de nuevo";
+        boton.addEventListener("click", () => this.#alReiniciar());
+
+        victoria.append(icono, texto, boton);
+        return victoria;
     }
 
     /**

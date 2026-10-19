@@ -46,6 +46,7 @@ function arrancar() {
     const tableroView = new TableroView(contenedorTablero, elementoEstado, {
         alSolicitarIntercambio: (fila1, columna1, fila2, columna2) =>
             controlador.solicitarIntercambio(fila1, columna1, fila2, columna2),
+        alReiniciar: () => controlador.reiniciar(),
     });
 
     const cabeceraView = new CabeceraView(cabecera, {
@@ -61,6 +62,7 @@ function arrancar() {
     const ajustesView = new AjustesView(contenedorAjustes, respaldoAjustes, botonAbrirAjustes, {
         alCambiarN: (n) => controlador.cambiarN(n),
         alCambiarTamano: (tamano) => controlador.cambiarTamanoFicha(tamano),
+        alCambiarForma: (conjuntoFormas) => controlador.cambiarFormaFicha(conjuntoFormas),
         alCambiarPaleta: (paleta) => controlador.cambiarPaleta(paleta),
         alCerrar: () => controlador.cerrarAjustes(),
     });

@@ -32,7 +32,13 @@ si el desorden sale "ya ganado" por casualidad, se vuelve a desordenar.
 **Qué se puede personalizar** (icono de engranaje, arriba a la derecha):
 - El tamaño del tablero: de 3×3 hasta el tamaño que se quiera (nunca menos de 3×3).
 - El tamaño con el que se dibujan las fichas: pequeña, mediana o grande.
-- La paleta de color de las fichas, manteniendo siempre las mismas tres formas.
+- La forma de las fichas: un conjunto más redondeado (círculo, cuadrado y rombo), otro más anguloso
+  (triángulo, hexágono y cruz) o uno más curvo (óvalo, pentágono y estrella).
+- La paleta de color de las fichas: azul (vívida), violeta (intensa y oscura) o terracota (cálida y
+  terrosa) — cada una con una personalidad distinta, no solo un tono distinto.
+
+Forma y color se eligen por separado y no dependen el uno del otro: se puede jugar con cualquier
+combinación de las dos, por ejemplo fichas angulares en la paleta violeta.
 
 Cualquiera de estos cambios empieza una partida completamente nueva: no se conserva el progreso de la
 partida anterior, porque cambiar el tablero o las fichas es, en la práctica, empezar a jugar otra vez.

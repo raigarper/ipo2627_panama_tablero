@@ -8,12 +8,42 @@
        --tono-interfaz colorea controles/fondo (cálido, casi neutro).
        --tono-fichas colorea el juego y es la base de una paleta TRIÁDICA:
        como hay exactamente 3 tipos de ficha, el tipo 2 usa +120° y el tipo 3
-       +240° sobre este mismo tono (ver components.css, .ficha--tipo-N). */
+       +240° sobre este mismo tono (ver components.css, .ficha--tipo-N). Esto
+       garantiza la separación DENTRO de una paleta (120° es la separación
+       máxima posible entre 3 colores): da igual qué paleta esté activa, sus
+       3 tipos de ficha siempre se leen como colores distintos.
+       --saturacion-fichas/--luminosidad-fichas dan personalidad a cada
+       paleta COMPLETA (no a un tipo suelto): una paleta vívida y clara, una
+       intensa y oscura, una tenue y cálida... Las tres variables las
+       sobrescribe cada paleta en bloque (ver .tablero--paleta-N y
+       .muestra--N en components.css) — cambiar de paleta es tocar solo
+       estas tres líneas, nunca JS ni HTML. */
     --tono-interfaz: 28;
     --tono-fichas: 210;
+    --saturacion-fichas: 60%;
+    --luminosidad-fichas: 54%;
 
-    /* Tono para los estados de "victoria"/foco: opuesto al de las fichas (+180°) para no competir con ellas. */
-    --tono-exito: calc(var(--tono-fichas) + 180);
+    /* Tono del foco de teclado: opuesto al de las fichas (+180°), para que
+       el anillo de foco nunca se camufle con el color de la ficha que
+       tiene debajo, sea cual sea la paleta elegida. */
+    --tono-foco: calc(var(--tono-fichas) + 180);
+    --color-foco: hsl(var(--tono-foco) 70% 40%);
+
+    /* Tono de "victoria": verde FIJO y literal, no derivado de
+       --tono-fichas. A diferencia del foco, aquí interesa justo lo
+       contrario: que el verde de "has ganado" se reconozca siempre igual,
+       pase lo que pase con la paleta de fichas elegida (incluida una
+       paleta que ya tenga tonos verdosos). */
+    --tono-exito: 142;
+    --color-exito: hsl(var(--tono-exito) 48% 36%);
+    --color-exito-hover: hsl(var(--tono-exito) 46% 28%);
+    --color-exito-fondo: hsl(var(--tono-exito) 55% 95%);
+
+    /* Tono para feedback de error de validación (p. ej. N inválido). Literal
+       y fijo, no derivado de --tono-fichas: debe leerse igual pase lo que
+       pase con la paleta de fichas elegida. */
+    --tono-error: 4;
+    --color-error: hsl(var(--tono-error) 72% 46%);
 
     /* Neutros de interfaz: fondos, bordes y texto, todos derivados de --tono-interfaz. */
     --color-fondo-a: hsl(var(--tono-interfaz) 26% 95%);
@@ -32,8 +62,6 @@
     --color-acento: hsl(var(--tono-interfaz) 45% 34%);
     --color-acento-hover: hsl(var(--tono-interfaz) 45% 27%);
     --color-acento-texto: hsl(var(--tono-interfaz) 20% 99%);
-    --color-foco: hsl(var(--tono-exito) 70% 40%);
-    --color-exito: hsl(var(--tono-exito) 55% 30%);
 
     /* --- Tipografía: una única familia sans-serif, jerarquía por tamaño/peso/tracking --- */
     --fuente-interfaz: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
